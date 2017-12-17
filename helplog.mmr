@@ -1,0 +1,25 @@
+//-----This is a help log : mmr-----
+
+cal:
+  in mmr mode:
+    you can use "mmr [instruction] [options...]" to edit variable memory.
+    [instruction]: echo
+        To display all variable values. No option(s) needed.
+    [instruction]: touch
+	To create a new variable values. If the variable already exists, cover it.
+      [options...]: "[name] [value]"
+	[name]: a name for the variable. When you need to call this variable, use "$[name]".
+	[value]: Any letters, symbols are forbidden. Specially, you can use "$MMR" to call MMR variable.
+    [instruction]: rm
+	To remove a variable values. The variable must exists.
+      [options...]: "[name]"
+	[name]: Remove this variable.
+
+    eg:    mmr echo <cr> (cr:type "enter")
+           mmr touch var1 12345 <cr>
+           mmr touch var2 $MMR <cr>
+	   mmr rm var1 <cr>
+	   mmr <cr>
+        mmr>...
+        mmr>q 
+//-----------------------------------

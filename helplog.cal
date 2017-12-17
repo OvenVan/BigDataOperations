@@ -1,0 +1,18 @@
+//-----This is a help log : cal-----
+
+cal:
+  in cal mode:
+    you can use "cal + [number1] + [operator] + [number2]" to calculate.
+    [number1], [number2]: It can only be made up of number[0-9]. Letters or spaces are forbidden.
+    [operator]: only "+" "-" "*" "/" is allowed.
+
+    when you type "cal [numbler1] [operator] [number2]", you will get a result delivered by modulus n.
+    The latest result you get is storaged in variable MMR. You may use it or storaged perpetually.
+             (how can i get modulus n ? Type "mod --help")
+             (how can i ust variable(s) ? Type "mmr --help")
+    eg:    cal 123 + 456 <cr> (cr:type "enter")
+           cal $v1 + $v2 <cr> (what's $ ? Type "mmr --help"
+           cal <cr>
+        cal>...
+        cal>q 
+//-----------------------------------

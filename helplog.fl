@@ -1,0 +1,12 @@
+//-----This is a help log : fl-----
+
+cal:
+  in fl mode:
+    you can use "fl [filename]" to open a file and calculate.
+    [filename]: Please put the file in the folder and type the name of the file only.
+
+  eg:    fl example.txt <cr> (cr:type "enter")
+         fl <cr>
+      fl>...
+      fl>q 
+//-----------------------------------

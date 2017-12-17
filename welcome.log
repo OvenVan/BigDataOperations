@@ -1,0 +1,11 @@
+This is a Big data Calculator.
+	version: V1.0.0
+
+ type "cal" for calculating.
+ type "fl" for opening file.
+ type "mod" for editing modulus
+ type "mmr" for editing variable memory. 
+ type "sys" for showing system configuration.
+ type "ver" for showing version.
+ type "h" for getting more help.
+ type "q" for quit.

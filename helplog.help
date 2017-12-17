@@ -1,0 +1,24 @@
+//-----This is a help log-----
+
+mode:
+    Normal Mode:
+        When you see "big_data > " before the cursor, it's in Normal mode.
+      Valid instruction: cal, fl, mod, mmr, sys, ver, h, q.
+
+    Calc Mode:
+	When you see "cal > " before the cursor, it's in Calc mode.
+
+    Memory Mode:
+        When you see "mmr > " before the cursor, it's in Memory mode.
+      Valid instruction: touch, echo, rm.
+
+    File Mode:
+        When you see "fl > " before the cursor, it's in File mode.
+
+more help:
+    in each mode, type "--help" for getting more help.
+
+instruction:
+    sys: display running infomation. Including "modulus", "MMR", "storaged variables".
+    ver: display version.
+//-----------------------------------

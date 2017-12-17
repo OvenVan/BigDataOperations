@@ -1,0 +1,8 @@
+//-----This is a help log : mod-----
+
+cal:
+  in modulus mode:
+    you can use "mod" to edit modulus.
+    when you are doing calc operation, the final result you get is delivered by modulus.You may edit modulus in modulus mode. The modulus is made up by a^b. What you need to do is editing the base n and the power b.
+
+//-----------------------------------
