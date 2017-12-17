@@ -9,7 +9,7 @@ cal:
 	To create a new variable values. If the variable already exists, cover it.
       [options...]: "[name] [value]"
 	[name]: a name for the variable. When you need to call this variable, use "$[name]".
-	[value]: Any letters, symbols are forbidden. Specially, you can use "$MMR" to call MMR variable.
+	[value]: Any letters, symbols are forbidden. Specially, you can use "$MMR" to call MMR variable, or you can use "$MOD" to call modulus variable.
     [instruction]: rm
 	To remove a variable values. The variable must exists.
       [options...]: "[name]"
