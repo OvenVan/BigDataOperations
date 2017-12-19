@@ -309,7 +309,7 @@ RTN_INSTR handle_mod(){
 	*system_modulus.base = base_temp;
 	system_modulus.pow = temp;
 	system_modulus.modulus = *system_modulus.base ^ system_modulus.pow;
-	TIME_BREAK = 0.2;
+	TIME_BREAK = 0.02;
 	return finished;
 }
 RTN_INSTR handle_fl(string filename){
