@@ -12,6 +12,8 @@
 #define MAXPOWERS "4001"
 #define MAXPOWERI 4001
 
+#define FL_OPT_MODULO_CASE_ON "$modulo_switch on"
+#define FL_OPT_MODULO_CASE_OFF "$modulo_switch off"
 using namespace std;
 typedef map<string, list_node* > M_MMR;
 M_MMR m_mmr;
@@ -167,28 +169,24 @@ RTN_INSTR handle_cal(vector<string> hdle){
 		list_node* temp = addition(num1, num2, system_modulus.modulus);
 		*LAST_DATA_MMR = *temp;
 		result_str = printl(LAST_DATA_MMR);
-		cout << result_str << endl<<endl;
 		delete(temp->destructor());
 	}
 	else if (operators == "-"){
 		pair<bool, list_node*> temp = subtracion(num1, num2, system_modulus.modulus);
 		*LAST_DATA_MMR = *temp.second;
 		result_str = printl(temp);
-		cout << result_str << endl << endl;
 		delete(temp.second->destructor());
 	}
 	else if (operators == "*"){
 		list_node* temp = multiplication(num1, num2, system_modulus.modulus);
 		*LAST_DATA_MMR = *temp;
 		result_str = printl(LAST_DATA_MMR);
-		cout << result_str << endl << endl;
 		delete(temp->destructor());
 	}
 	else if (operators == "/"){
 		list_node* temp = division(num1, num2, system_modulus.modulus);
 		*LAST_DATA_MMR = *temp;
 		result_str = printl(LAST_DATA_MMR);
-		cout << result_str << endl << endl;
 		delete(temp->destructor());
 	}
 	else if (operators == "^"){
@@ -196,7 +194,6 @@ RTN_INSTR handle_cal(vector<string> hdle){
 		list_node* temp = power(num1, num2, system_modulus.modulus);
 		*LAST_DATA_MMR = *temp;
 		result_str = printl(LAST_DATA_MMR);
-		cout << result_str << endl << endl;
 		delete(temp->destructor());
 	}
 	else{
@@ -205,6 +202,8 @@ RTN_INSTR handle_cal(vector<string> hdle){
 		delete(num2->destructor());
 		return error;
 	}
+
+	cout << "result = "<<result_str << endl<<"       Order(s)of magnitude: "<<rtn_length(LAST_DATA_MMR)<< endl;
 	string print = "";
 	string pow_str = analyze2str(system_modulus.pow);
 	if (modulo_switch)
@@ -324,11 +323,15 @@ RTN_INSTR handle_fl(string filename){
 		while (file.good()){
 			getline(file, str);
 			cout << " " << str << endl;
+			if (str == FL_OPT_MODULO_CASE_ON)
+				modulo_switch = 1;
+			if (str == FL_OPT_MODULO_CASE_OFF)
+				modulo_switch = 0;
 			ANALYSIS_PACK temp_pack;
 			RTN_INSTR fl_status;
 			temp_pack = analyze(str);
 			if (!temp_pack.valid){
-				err_count++;
+				//err_count++;
 				continue;
 			}
 			fl_status = handle_cal(temp_pack.decompose_instr);
@@ -352,7 +355,7 @@ RTN_INSTR handle_fl(string filename){
 int welcome(){
 	ifstream in;
 	char str;
-	string filename = "welcome.log";
+	string filename = "welcome.wcm";
 	in.open(filename);
 	if (!in){
 		return -1;
