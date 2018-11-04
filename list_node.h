@@ -3,8 +3,9 @@
 //2017.12.05
 #ifndef _LIST_NODE_
 #define _LIST_NODE_
-#include<string>
+#include <string>
 #include <iostream>
+#include <time.h>
 using namespace std;
 extern  double TIME_BREAK;
 typedef struct num_pack pack;

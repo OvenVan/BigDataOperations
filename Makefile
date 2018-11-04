@@ -1,5 +1,5 @@
 OBJ=list_node.o big_int.o bigdata.o
-EXE=main
+EXE=a.exe
 
 $(EXE):$(OBJ)
 	g++ $(OBJ) -o $(EXE)

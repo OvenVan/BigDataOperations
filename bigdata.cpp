@@ -6,6 +6,7 @@
 #include "list_node.h"
 #include "big_int.h"
 #include <math.h>
+
 #define VERSION "2.0.0"
 #define LAST_DATA "$MMR"
 #define MOD_DATA "$MOD"
