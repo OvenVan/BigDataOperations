@@ -16,23 +16,30 @@
 #define FL_OPT_MODULO_CASE_ON "$modulo_switch on"
 #define FL_OPT_MODULO_CASE_OFF "$modulo_switch off"
 using namespace std;
+
 typedef map<string, list_node* > M_MMR;
 M_MMR m_mmr;
+
 list_node* LAST_DATA_MMR;
+
 typedef enum { cal, fl, ver, h, q, mod, mmr } ALL_INSTR;
 typedef enum { finished, unfinished, unknown_instr, error, exits } RTN_INSTR;
 typedef enum {rm, touch, echo} MMR_INSTR;
+
 typedef struct {
 	list_node* base;
 	int pow;
 	list_node* modulus;
-}s_modulus;
-s_modulus system_modulus;
+}modulus_s;
+modulus_s system_modulus;
+
 typedef struct {
 	vector <string> decompose_instr;
 	bool valid;
-}ANALYSIS_PACK;
+}ANALYSIS_PACK_s;
+
 static ALL_INSTR status = q; //cal:cal ; fl:fl ; h:h ; mmr:mmr ; q:normal
+
 bool is_number(string& str){
 	bool is_positive = false;
 	if (str == "")
@@ -117,9 +124,9 @@ bool save_log(string& outputlog){
 		return false;
 	return true;
 }
-ANALYSIS_PACK analyze(string str){
+ANALYSIS_PACK_s analyze(string str){
 	int ptr = 0;
-	ANALYSIS_PACK rtnpack;
+	ANALYSIS_PACK_s rtnpack;
 	string temp;
 	unsigned i;
 	for (i = 0; i <= str.length(); i++){
@@ -328,7 +335,7 @@ RTN_INSTR handle_fl(string filename){
 				modulo_switch = 1;
 			if (str == FL_OPT_MODULO_CASE_OFF)
 				modulo_switch = 0;
-			ANALYSIS_PACK temp_pack;
+			ANALYSIS_PACK_s temp_pack;
 			RTN_INSTR fl_status;
 			temp_pack = analyze(str);
 			if (!temp_pack.valid){
@@ -380,7 +387,7 @@ int welcome(){
 	TIME_BREAK = 0.02;
 	return 0;
 }
-RTN_INSTR execute(ANALYSIS_PACK& pack){
+RTN_INSTR execute(ANALYSIS_PACK_s& pack){
 	string temp_instr = pack.decompose_instr.at(0);
 	if (temp_instr == "q"){
 		if ((pack.decompose_instr.size() == 2) && (pack.decompose_instr.at(1) == "--help")){
@@ -505,8 +512,9 @@ RTN_INSTR execute(ANALYSIS_PACK& pack){
 }
 int main(){
 	bool already_print = false;
-	if (welcome() != 0)
+	if (welcome() != 0){
 		return -1;
+	}
 	while (1){
 		if (!already_print){
 			switch (status)
@@ -526,12 +534,14 @@ int main(){
 			case mmr:
 				cout << "mmr > ";
 				break;
+			default:
+				break;
 			}
 		}
 		already_print = true;
 
 		string instruction;
-		ANALYSIS_PACK temp;
+		ANALYSIS_PACK_s temp;
 		fflush(stdin);
 		cin.clear();
 		getline(cin, instruction, '\n');

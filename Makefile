@@ -1,20 +1,25 @@
-OBJ=list_node.o big_int.o bigdata.o
-EXE=a.exe
+#MakeFile created by automake-OvenVan
 
-$(EXE):$(OBJ)
-	g++ $(OBJ) -o $(EXE)
-	@echo "Type ./$(EXE) to start the program."
+BIN	= a.exe
+CC	= gcc
+CFLAG	= -g3 -Wall -static-libgcc =std=c++11
+CXX	= g++
+CXXFLAG	= -g3 -Wall -static-libgcc -std=c++11 -lstdc++
+OBJ	= big_int.o bigdata.o list_node.o 
 
-bigdata.o:bigdata.cpp list_node.h big_int.h
-	gcc -c bigdata.cpp
+$(BIN): $(OBJ)
+	$(CXX) $(OBJ) -o $(BIN)
+	@echo "Type ./$(BIN) to start the program."
 
-big_int.o:big_int.cpp list_node.h big_int.h
-	gcc -c big_int.cpp
+big_int.o: big_int.cpp
+	$(CC) -c big_int.cpp -o big_int.o $(CXXFLAG)
 
-list_node.o:list_node.cpp list_node.h
-	gcc -c list_node.cpp
+bigdata.o: bigdata.cpp
+	$(CC) -c bigdata.cpp -o bigdata.o $(CXXFLAG)
 
+list_node.o: list_node.cpp
+	$(CC) -c list_node.cpp -o list_node.o $(CXXFLAG)
 
 clean:
-	@rm $(EXE) *.o -f *.log
-	@ls -ll
+	@rm $(BIN) *.o -f *.log
+	@echo "Remove Successful."

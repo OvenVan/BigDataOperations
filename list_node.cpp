@@ -569,9 +569,9 @@ list_node* list_node::operator^(int power){
 	//cout << "I am calc : " << printl(this) << " ^ " << power<<endl;
 	clock_t start, pause;
 	double spend_time = 0.0;
-	const double TIME_ALLOWED = 0.1;
+	//const double TIME_ALLOWED = 0.1;
 	start = clock();
-	int del_length = -1;
+	//int del_length = -1;
 	if (power == 0){
 		return create_list("1");
 	}
@@ -645,14 +645,17 @@ int compare(list_node* data1, list_node* data2){ //0:equal , 1: data1 is bigger 
 	if (ptr2->aftr->data != '\0')
 		return -1;
 	else{
-		ptr1 = data1->aftr; ptr2 = data2->aftr;
+		ptr1 = data1->aftr;
+		ptr2 = data2->aftr;
 		for (int i = 1; i <= n; i++){
 			if ((ptr1->data) > (ptr2->data))
 				return 1;
 			else if (ptr1->data < ptr2->data)
 				return -1;
-			else
-				ptr1 = ptr1->aftr; ptr2 = ptr2->aftr;
+			else{
+				ptr1 = ptr1->aftr; 
+				ptr2 = ptr2->aftr;
+			}
 		}//for
 	}//else
 	return -99;
