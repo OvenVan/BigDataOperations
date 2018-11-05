@@ -1,11 +1,11 @@
-#include <iostream>
-#include <fstream>
-#include <vector>
-#include <map>
-#include <sstream>
-#include "list_node.h"
 #include "big_int.h"
+#include "list_node.h"
+#include <fstream>
+#include <iostream>
+#include <map>
 #include <math.h>
+#include <sstream>
+#include <vector>
 
 #define VERSION "2.0.0"
 #define LAST_DATA "$MMR"
@@ -17,34 +17,59 @@
 #define FL_OPT_MODULO_CASE_OFF "$modulo_switch off"
 using namespace std;
 
-typedef map<string, list_node* > M_MMR;
+typedef map<string, list_node *> M_MMR;
 M_MMR m_mmr;
 
-list_node* LAST_DATA_MMR;
+list_node *LAST_DATA_MMR;
 
-typedef enum { cal, fl, ver, h, q, mod, mmr } ALL_INSTR;
-typedef enum { finished, unfinished, unknown_instr, error, exits } RTN_INSTR;
-typedef enum {rm, touch, echo} MMR_INSTR;
+typedef enum
+{
+	cal,
+	fl,
+	ver,
+	h,
+	q,
+	mod,
+	mmr
+} ALL_INSTR;
+typedef enum
+{
+	finished,
+	unfinished,
+	unknown_instr,
+	error,
+	exits
+} RTN_INSTR;
+typedef enum
+{
+	rm,
+	touch,
+	echo
+} MMR_INSTR;
 
-typedef struct {
-	list_node* base;
+typedef struct
+{
+	list_node *base;
 	int pow;
-	list_node* modulus;
-}modulus_s;
+	list_node *modulus;
+} modulus_s;
 modulus_s system_modulus;
 
-typedef struct {
-	vector <string> decompose_instr;
+typedef struct
+{
+	vector<string> decompose_instr;
 	bool valid;
-}ANALYSIS_PACK_s;
+} ANALYSIS_PACK_s;
 
 static ALL_INSTR status = q; //cal:cal ; fl:fl ; h:h ; mmr:mmr ; q:normal
 
-bool is_number(string& str){
+bool is_number(string &str)
+{
 	bool is_positive = false;
 	if (str == "")
 		return false;
-	for (unsigned i = 0; i < str.length(); i++){
+	for (unsigned i = 0; i < str.length(); i++)
+	{
 		if (str[i] == ' ')
 			continue;
 		if ((str[i] >= '0') && (str[i] <= '9'))
@@ -57,11 +82,13 @@ bool is_number(string& str){
 	else
 		return false;
 }
-list_node* analyze2list(string str){
-	list_node* num;
-	M_MMR::iterator iter ;
+list_node *analyze2list(string str)
+{
+	list_node *num;
+	M_MMR::iterator iter;
 	string s_temp = "";
-	if (str[0] == '$'){
+	if (str[0] == '$')
+	{
 		s_temp = str.substr(1, str.length());
 		iter = m_mmr.find(s_temp);
 		if (iter != m_mmr.end())
@@ -69,39 +96,44 @@ list_node* analyze2list(string str){
 		else
 			return NULL;
 	}
-	else{
+	else
+	{
 		if (is_number(str))
 			num = create_list(str);
 		else
 			return NULL;
 	}
 	return num;
-
 }
-int analyze2int(list_node* list){
-	list_node* nobigger = create_list(MAXPOWERS);
-	if (compare(list, nobigger) == 1){
+int analyze2int(list_node *list)
+{
+	list_node *nobigger = create_list(MAXPOWERS);
+	if (compare(list, nobigger) == 1)
+	{
 		cout << "Too large Operation.\n";
 		return 0;
 	}
 	int count = 0;
 	int rtn = 0;
-	list_node* ptr = list->get_prev();
-	while (ptr->get_data() != -1){
+	list_node *ptr = list->get_prev();
+	while (ptr->get_data() != -1)
+	{
 		rtn += ptr->get_data() * (int)pow(10, count);
 		count++;
 		ptr = ptr->get_prev();
 	}
 	return rtn;
 }
-string analyze2str(int n){
+string analyze2str(int n)
+{
 	stringstream ss;
 	string str;
 	ss << n;
 	ss >> str;
 	return str;
 }
-ALL_INSTR gets_status(string str){
+ALL_INSTR gets_status(string str)
+{
 	if (str == "cal")
 		return cal;
 	else if (str == "fl")
@@ -113,10 +145,12 @@ ALL_INSTR gets_status(string str){
 	else
 		return q;
 }
-bool save_log(string& outputlog){
+bool save_log(string &outputlog)
+{
 	ofstream logfile;
 	logfile.open("log.log", ios_base::app);
-	if (logfile.is_open()){
+	if (logfile.is_open())
+	{
 		logfile << outputlog << endl;
 		logfile.close();
 	}
@@ -124,12 +158,14 @@ bool save_log(string& outputlog){
 		return false;
 	return true;
 }
-ANALYSIS_PACK_s analyze(string str){
+ANALYSIS_PACK_s analyze(string str)
+{
 	int ptr = 0;
 	ANALYSIS_PACK_s rtnpack;
 	string temp;
 	unsigned i;
-	for (i = 0; i <= str.length(); i++){
+	for (i = 0; i <= str.length(); i++)
+	{
 		if (str[i] != ' ')
 			continue;
 		temp = str.substr(ptr, i - ptr);
@@ -146,72 +182,84 @@ ANALYSIS_PACK_s analyze(string str){
 		rtnpack.valid = true;
 	return rtnpack;
 }
-RTN_INSTR open_log(string filename){
+RTN_INSTR open_log(string filename)
+{
 	ifstream file;
 	string str = "";
 	file.open(filename, ios_base::in);
-	while (file.good()){
+	while (file.good())
+	{
 		getline(file, str);
 		cout << " " << str << endl;
 	}
 	return finished;
 }
-RTN_INSTR handle_cal(vector<string> hdle){
-	if ((hdle.size() == 1) && (hdle.at(0) == "--help")){
-		open_log("helplog.cal");
+RTN_INSTR handle_cal(vector<string> hdle)
+{
+	if ((hdle.size() == 1) && (hdle.at(0) == "--help"))
+	{
+		open_log("io/helplog.cal");
 		return finished;
 	}
 	if (hdle.size() != 3)
 		return error;
-	list_node* num1, *num2;
+	list_node *num1, *num2;
 	num1 = analyze2list(hdle.at(0));
 	num2 = analyze2list(hdle.at(2));
-	if ((num1 == NULL) || (num2 == NULL)){
+	if ((num1 == NULL) || (num2 == NULL))
+	{
 		cout << "        No variable found. Do you mean $[variable]?\n";
 		return error;
 	}
 	string operators = hdle.at(1);
 	//cout << "        Calc: " << printl(num1) << " " << operators << " " << printl(num2) << endl;
 	string result_str = "";
-	if (operators == "+"){
-		list_node* temp = addition(num1, num2, system_modulus.modulus);
+	if (operators == "+")
+	{
+		list_node *temp = addition(num1, num2, system_modulus.modulus);
 		*LAST_DATA_MMR = *temp;
 		result_str = printl(LAST_DATA_MMR);
-		delete(temp->destructor());
+		delete (temp->destructor());
 	}
-	else if (operators == "-"){
-		pair<bool, list_node*> temp = subtracion(num1, num2, system_modulus.modulus);
+	else if (operators == "-")
+	{
+		pair<bool, list_node *> temp = subtracion(num1, num2, system_modulus.modulus);
 		*LAST_DATA_MMR = *temp.second;
 		result_str = printl(temp);
-		delete(temp.second->destructor());
+		delete (temp.second->destructor());
 	}
-	else if (operators == "*"){
-		list_node* temp = multiplication(num1, num2, system_modulus.modulus);
+	else if (operators == "*")
+	{
+		list_node *temp = multiplication(num1, num2, system_modulus.modulus);
 		*LAST_DATA_MMR = *temp;
 		result_str = printl(LAST_DATA_MMR);
-		delete(temp->destructor());
+		delete (temp->destructor());
 	}
-	else if (operators == "/"){
-		list_node* temp = division(num1, num2, system_modulus.modulus);
+	else if (operators == "/")
+	{
+		list_node *temp = division(num1, num2, system_modulus.modulus);
 		*LAST_DATA_MMR = *temp;
 		result_str = printl(LAST_DATA_MMR);
-		delete(temp->destructor());
+		delete (temp->destructor());
 	}
-	else if (operators == "^"){
+	else if (operators == "^")
+	{
 		//int x = analyze2int(num2);
-		list_node* temp = power(num1, num2, system_modulus.modulus);
+		list_node *temp = power(num1, num2, system_modulus.modulus);
 		*LAST_DATA_MMR = *temp;
 		result_str = printl(LAST_DATA_MMR);
-		delete(temp->destructor());
+		delete (temp->destructor());
 	}
-	else{
+	else
+	{
 		cout << "    Unknown Operator.\n";
-		delete(num1->destructor());
-		delete(num2->destructor());
+		delete (num1->destructor());
+		delete (num2->destructor());
 		return error;
 	}
 
-	cout << "result = "<<result_str << endl<<"       Order(s)of magnitude: "<<rtn_length(LAST_DATA_MMR)<< endl;
+	cout << "result = " << result_str << endl
+		 << "       Order(s)of magnitude: " << rtn_length(LAST_DATA_MMR) << endl;
 	string print = "";
 	string pow_str = analyze2str(system_modulus.pow);
 	if (modulo_switch)
@@ -220,97 +268,118 @@ RTN_INSTR handle_cal(vector<string> hdle){
 		print = "( " + printl(num1) + " " + operators + " " + printl(num2) + " ) = " + result_str;
 	if (!save_log(print))
 		cout << "    cannot record on logfile.\n";
-	delete(num1->destructor());
-	delete(num2->destructor());
+	delete (num1->destructor());
+	delete (num2->destructor());
 	return finished;
 }
-RTN_INSTR handle_mmr(vector<string> hdle){
-	if ((hdle.size() == 1) && (hdle.at(0) == "--help")){
-		open_log("helplog.mmr");
+RTN_INSTR handle_mmr(vector<string> hdle)
+{
+	if ((hdle.size() == 1) && (hdle.at(0) == "--help"))
+	{
+		open_log("io/helplog.mmr");
 		return finished;
 	}
 	string instr = hdle.at(0);
-	if ((hdle.size() == 1) && (instr == "--help")){
+	if ((hdle.size() == 1) && (instr == "--help"))
+	{
 		cout << "show help mmr log\n";
 		return finished;
 	}
-	if (instr == "rm"){
-		if (hdle.size() != 2){
+	if (instr == "rm")
+	{
+		if (hdle.size() != 2)
+		{
 			cout << "    parameter error. Too much or too little.\n";
 			return error;
 		}
 		string del_temp = hdle.at(1);
 		M_MMR::iterator iter = m_mmr.find(del_temp);
-		if (iter != m_mmr.end()){
+		if (iter != m_mmr.end())
+		{
 			//num = create_list(iter->second);
 			iter->second->destructor();
 			m_mmr.erase(iter);
 		}
-		else{
+		else
+		{
 			cout << "    Variable " << del_temp << " not found.\n";
 			return error;
 		}
 	}
-	else if (instr == "touch"){
-		if (hdle.size() != 3){
+	else if (instr == "touch")
+	{
+		if (hdle.size() != 3)
+		{
 			cout << "    parameter error. Too much or too little.\n";
 			return error;
 		}
 		string touch_temp = hdle.at(1);
-		if (hdle.at(2) == LAST_DATA){
+		if (hdle.at(2) == LAST_DATA)
+		{
 			m_mmr[touch_temp] = create_list(LAST_DATA_MMR);
 			return finished;
 		}
-		if (hdle.at(2) == MOD_DATA){
+		if (hdle.at(2) == MOD_DATA)
+		{
 			m_mmr[touch_temp] = create_list(system_modulus.modulus);
 			return finished;
 		}
-		if (is_number(hdle.at(2))){
+		if (is_number(hdle.at(2)))
+		{
 			m_mmr[touch_temp] = create_list(hdle.at(2));
 			return finished;
 		}
-		else{
+		else
+		{
 			cout << "    Unknown number.\n";
 			return error;
 		}
 	}
-	else if (instr == "echo"){
-		if (hdle.size() != 1){
+	else if (instr == "echo")
+	{
+		if (hdle.size() != 1)
+		{
 			cout << "    parameter error. Too much or too little.\n";
 			return error;
 		}
 		if (m_mmr.size() == 0)
 			cout << "no variable storaged.\n";
-		else{
+		else
+		{
 			M_MMR::iterator iter = m_mmr.begin();
-			for (iter = m_mmr.begin(); iter != m_mmr.end();iter++){
+			for (iter = m_mmr.begin(); iter != m_mmr.end(); iter++)
+			{
 				cout << iter->first << " : ";
-				cout<<printl(iter->second) ;
+				cout << printl(iter->second);
 				cout << endl;
 			}
 		}
 	}
-	else{
+	else
+	{
 		cout << "    No such instruction for mmr.\n";
 		return error;
 	}
 	return finished;
 }
-RTN_INSTR handle_mod(){
+RTN_INSTR handle_mod()
+{
 	cout << "    the modulus is: ";
-	cout<<printl(system_modulus.base);
+	cout << printl(system_modulus.base);
 	cout << " ^ " << system_modulus.pow << endl;
 	cout << "    please input the index and the base:\n    base: ";
 	string base_temp;
 	getline(cin, base_temp, '\n');
-	if (!is_number(base_temp)){
+	if (!is_number(base_temp))
+	{
 		cout << "    incorrect input of number BASE.\n";
 		return error;
 	}
 	int temp = 0;
 	cout << "    index: ";
 	cin >> temp;
-	if ((temp <= 0)|| (temp >=MAXPOWERI)){
+	if ((temp <= 0) || (temp >= MAXPOWERI))
+	{
 		cout << "    incorrect input of number index.\n";
 		return error;
 	}
@@ -320,15 +389,18 @@ RTN_INSTR handle_mod(){
 	TIME_BREAK = 0.02;
 	return finished;
 }
-RTN_INSTR handle_fl(string filename){
+RTN_INSTR handle_fl(string filename)
+{
 	ifstream file;
 	file.open(filename, ios_base::in);
-	if (file.is_open()){
+	if (file.is_open())
+	{
 		string str;
 		int succ_count = 0, err_count = 0;
 		clock_t start, end;
 		start = clock();
-		while (file.good()){
+		while (file.good())
+		{
 			getline(file, str);
 			cout << " " << str << endl;
 			if (str == FL_OPT_MODULO_CASE_ON)
@@ -338,14 +410,16 @@ RTN_INSTR handle_fl(string filename){
 			ANALYSIS_PACK_s temp_pack;
 			RTN_INSTR fl_status;
 			temp_pack = analyze(str);
-			if (!temp_pack.valid){
+			if (!temp_pack.valid)
+			{
 				//err_count++;
 				continue;
 			}
 			fl_status = handle_cal(temp_pack.decompose_instr);
 			if (fl_status == finished)
 				succ_count++;
-			else{
+			else
+			{
 				cout << "  Syntax error: instruction '" << str << "' could not been analyzed.\n";
 				err_count++;
 			}
@@ -355,20 +429,24 @@ RTN_INSTR handle_fl(string filename){
 		cout << "\n                              Total Time: " << (double)(end - start) / CLOCKS_PER_SEC << "s\n";
 		return finished;
 	}
-	else{
+	else
+	{
 		cout << "    cannot open file: " << filename << " .\n";
 		return error;
 	}
 }
-int welcome(){
+int welcome()
+{
 	ifstream in;
 	char str;
-	string filename = "welcome.wcm";
+	string filename = "io/welcome.wcm";
 	in.open(filename);
-	if (!in){
+	if (!in)
+	{
 		return -1;
 	}
-	while (!in.eof()){
+	while (!in.eof())
+	{
 		in.read(&str, 1);
 		printf("%c", str);
 	}
@@ -387,17 +465,22 @@ int welcome(){
 	TIME_BREAK = 0.02;
 	return 0;
 }
-RTN_INSTR execute(ANALYSIS_PACK_s& pack){
+RTN_INSTR execute(ANALYSIS_PACK_s &pack)
+{
 	string temp_instr = pack.decompose_instr.at(0);
-	if (temp_instr == "q"){
-		if ((pack.decompose_instr.size() == 2) && (pack.decompose_instr.at(1) == "--help")){
-			open_log("helplog.q");
+	if (temp_instr == "q")
+	{
+		if ((pack.decompose_instr.size() == 2) && (pack.decompose_instr.at(1) == "--help"))
+		{
+			open_log("io/helplog.q");
 			return finished;
 		}
-		if (status == q){
+		if (status == q)
+		{
 			if (pack.decompose_instr.size() == 2)
 				rename("log.log", pack.decompose_instr.at(1).c_str());
-			else if (pack.decompose_instr.size() == 1){
+			else if (pack.decompose_instr.size() == 1)
+			{
 				cout << "    You do not rename the logfile before exit. Do you want to quit anyway?(y/n) > ";
 				char yon = ' ';
 				cin >> yon;
@@ -416,46 +499,57 @@ RTN_INSTR execute(ANALYSIS_PACK_s& pack){
 			status = q;
 		return finished;
 	}
-	if (status == q){
-		if (temp_instr == "cal"){
+	if (status == q)
+	{
+		if (temp_instr == "cal")
+		{
 			vector<string> temp;
-			for (unsigned i= 1; i < pack.decompose_instr.size(); ++i)
+			for (unsigned i = 1; i < pack.decompose_instr.size(); ++i)
 				temp.push_back(pack.decompose_instr.at(i));
-			if (temp.size() == 0){
+			if (temp.size() == 0)
+			{
 				status = gets_status(temp_instr);
 				return unfinished;
 			}
 			return handle_cal(temp);
 		}
-		else if (temp_instr == "fl"){
-			//return finished;
-			if (pack.decompose_instr.size() == 1){
+		else if (temp_instr == "fl")
+		{
+			if (pack.decompose_instr.size() == 1)
+			{
 				status = fl;
 				return unfinished;
 			}
-			else if (pack.decompose_instr.size() == 2){
-				if (pack.decompose_instr.at(1) == "--help"){
-					open_log("helplog.fl");
+			else if (pack.decompose_instr.size() == 2)
+			{
+				if (pack.decompose_instr.at(1) == "--help")
+				{
+					open_log("io/helplog.fl");
 					return finished;
 				}
 				return handle_fl(pack.decompose_instr.at(1));
 			}
-			else{
+			else
+			{
 				cout << "    parameter too more or too less.\n";
 				return error;
 			}
 		}
-		else if (temp_instr == "ver"){
+		else if (temp_instr == "ver")
+		{
 			cout << "    VERSION: " << VERSION << endl;
 			return finished;
 		}
-		else if (temp_instr == "h"){
-			open_log("helplog.help");
+		else if (temp_instr == "h")
+		{
+			open_log("io/helplog.help");
 			return finished;
 		}
-		else if (temp_instr == "mod"){
-			if ((pack.decompose_instr.size() == 2) && (pack.decompose_instr.at(1) == "--help")){
-				open_log("helplog.modulus");
+		else if (temp_instr == "mod")
+		{
+			if ((pack.decompose_instr.size() == 2) && (pack.decompose_instr.at(1) == "--help"))
+			{
+				open_log("io/helplog.modulus");
 				return finished;
 			}
 			else if (pack.decompose_instr.size() == 1)
@@ -463,45 +557,54 @@ RTN_INSTR execute(ANALYSIS_PACK_s& pack){
 			else
 				return error;
 		}
-		else if (temp_instr == "sys"){
+		else if (temp_instr == "sys")
+		{
 			cout << "    modulus: ";
-			cout<<printl(system_modulus.modulus);
+			cout << printl(system_modulus.modulus);
 			cout << "\n    MMR: ";
-			cout<<printl(LAST_DATA_MMR);
+			cout << printl(LAST_DATA_MMR);
 			cout << "\n    storaged variables: " << m_mmr.size();
 			cout << "\n    Break_time: " << TIME_BREAK << " s";
 			cout << "\n    MAX_POW: " << MAXPOWERS;
-			cout << "\n    Modulo Switch: " << modulo_switch<<endl;
+			cout << "\n    Modulo Switch: " << modulo_switch << endl;
 			return finished;
 		}
-		else if (temp_instr == "mmr"){
+		else if (temp_instr == "mmr")
+		{
 			vector<string> temp;
 			for (unsigned i = 1; i < pack.decompose_instr.size(); ++i)
 				temp.push_back(pack.decompose_instr.at(i));
-			if (temp.size() == 0){
+			if (temp.size() == 0)
+			{
 				status = gets_status(temp_instr);
 				return unfinished;
 			}
 			return handle_mmr(temp);
 		}
-		else{
+		else
+		{
 			return unknown_instr;
 		}
-	}//if (status = q)
-	else{  //status != q
+	} //if (status = q)
+	else
+	{ //status != q
 		if (status == cal)
 			return handle_cal(pack.decompose_instr);
 		else if (status == mmr)
 			return handle_mmr(pack.decompose_instr);
-		else if (status == fl){
-			if (pack.decompose_instr.size() == 1){
-				if (pack.decompose_instr.at(0) == "--help"){
-					open_log("helplog.fl");
+		else if (status == fl)
+		{
+			if (pack.decompose_instr.size() == 1)
+			{
+				if (pack.decompose_instr.at(0) == "--help")
+				{
+					open_log("io/helplog.fl");
 					return finished;
 				}
 				return handle_fl(pack.decompose_instr.at(0));
 			}
-			else{
+			else
+			{
 				cout << "    parameter too more or too less.\n";
 				return error;
 			}
@@ -510,13 +613,17 @@ RTN_INSTR execute(ANALYSIS_PACK_s& pack){
 			return unknown_instr;
 	}
 }
-int main(){
+int main()
+{
 	bool already_print = false;
-	if (welcome() != 0){
+	if (welcome() != 0)
+	{
 		return -1;
 	}
-	while (1){
-		if (!already_print){
+	while (1)
+	{
+		if (!already_print)
+		{
 			switch (status)
 			{
 			case q:
@@ -545,12 +652,14 @@ int main(){
 		fflush(stdin);
 		cin.clear();
 		getline(cin, instruction, '\n');
-		if (instruction == "modulo_switch off"){
+		if (instruction == "modulo_switch off")
+		{
 			modulo_switch = false;
 			already_print = false;
 			continue;
 		}
-		else if (instruction == "modulo_switch on"){
+		else if (instruction == "modulo_switch on")
+		{
 			modulo_switch = true;
 			already_print = false;
 			continue;
@@ -576,5 +685,3 @@ int main(){
 		already_print = false;
 	}
 }
-
-
