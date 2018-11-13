@@ -2,9 +2,9 @@
 
 BIN	= a.exe
 CC	= gcc
-CFLAG	= -g3 -Wall -static-libgcc =std=c++11 
+CFLAG	= -g3 -Wall -static-libgcc =std=c++11 -O0
 CXX	= g++
-CXXFLAG	= -g3 -Wall -static-libgcc -std=c++11 -lstdc++
+CXXFLAG	= -g3 -Wall -static-libgcc -std=c++11 -lstdc++ -O0
 OBJ	= big_int.o bigdata.o list_node.o 
 
 $(BIN): $(OBJ)

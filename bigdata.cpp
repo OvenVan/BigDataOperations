@@ -248,7 +248,6 @@ eRTN_INSTR handle_cal(vector<string> hdle)
 	}
 	else if (operators == "^")
 	{
-		//int x = analyze2int(num2);
 		list_node *temp = power(num1, num2, system_modulus.modulus);
 		temp->replaceGuardian(LAST_DATA_MMR);
 		result_str = printl(LAST_DATA_MMR);
@@ -263,7 +262,7 @@ eRTN_INSTR handle_cal(vector<string> hdle)
 	}
 
 	cout << "result = " << result_str << endl
-		 << "       Order(s)of magnitude: " << rtn_length(LAST_DATA_MMR) << endl;
+		 << "       10^(x):x=" << rtn_length(LAST_DATA_MMR) - 1 << endl;
 	string print = "";
 	string pow_str = analyze2str(system_modulus.pow);
 	if (modulo_switch)
@@ -626,8 +625,10 @@ int main()
 /*
 	system("pause");
 	while(1){
-	list_node *test_list = create_list("12");
-	list_node *test_list2 = create_list("234234234");
+	list_node *test_list = create_list("12133333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333322222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222");
+	list_node *test_list2 = create_list("12133333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333322222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222");
+
+//	list_node *test_list2 = create_list("234234234");
 	//list_node *getres = (*test_list ^ 400);
 	delete (test_list->destructor());
 	delete (test_list2->destructor());
@@ -635,7 +636,6 @@ int main()
 	}
 	system("pause");	
 */
-
 
 	if (welcome() != 0)
 	{

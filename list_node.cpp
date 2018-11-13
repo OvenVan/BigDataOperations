@@ -646,7 +646,6 @@ cout << "operator ^: dealing: " << printl(this) << " ^ " << power << endl;
 	for (int i = 1; i < power; i++)
 	{
 		//计算rtnpower * this，将res返回给rtnpower
-/*
 		if (spend_time >= TIME_BREAK)
 		{
 			cout << " : " << spend_time << "s" << endl;
@@ -655,12 +654,13 @@ cout << "operator ^: dealing: " << printl(this) << " ^ " << power << endl;
 			TIME_BREAK *= 10;
 			list_node *temp1 = (*rtnpower ^ (power / i));
 			list_node *temp2 = (*this ^ (power % i));
+cout << "multipling:";
 			list_node *rtn = *temp1 * *temp2;
+cout << "finished.\n";
 			delete (temp1->destructor());
 			delete (temp2->destructor());
 			return rtn;
 		} //分解power:
-//*/
 		list_node *ptrpower = rtnpower->prev;
 		list_node *respower = create_list("0");
 		int count = 0;
@@ -678,7 +678,7 @@ cout << "operator ^: dealing: " << printl(this) << " ^ " << power << endl;
 		}
 		*rtnpower = *respower;
 		delete (respower->destructor());
-cout << i << " ";
+cout << ".";
 	} 
 cout << " : " << spend_time << "s" << endl;
 	rm_pack(dt);
