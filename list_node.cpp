@@ -51,139 +51,7 @@ pair<char, char> list_node::operator_bit(char c1, char c2, char bit_operator)
 	resbychar.second = (res % 10) + 48;
 	return resbychar;
 }
-/*
-list_node* list_node::estimated(list_node* number, list_node* opd_number){	
 
-
-	int length1 = 0, length2 = 0;
-	list_node*ptr1 = number->aftr;
-	list_node* ptr2 = opd_number->aftr;
-	length1 = rtn_length(ptr1);
-	length2 = rtn_length(ptr2);
-	int delta = length1 - length2;
-
-	if (delta == 0){
-		int opd_i = (int)opd_number->aftr->data - 48;
-		int num_i = (int)number->aftr->data - 48;
-		int resultmax = num_i / opd_i;
-		int resultmin = num_i / (opd_i + 1);
-		int result = (resultmax + resultmin) / 2;
-		if (resultmin + 1 == resultmax){//不需要进入while循环
-			result++;
-		}
-		string sresult = to_string(result);
-		list_node* templist = create_list(sresult);
-		if (resultmin + 1 == resultmax){
-			list_node * comp_temp = (*opd_number * *templist);
-			int differ = compare(comp_temp, number);
-			if (differ == 1){
-				sresult = to_string(result - 1);
-				*templist = sresult;
-			}
-			delete(comp_temp->destructor());
-			return templist;
-		}
-		list_node * comp_temp = create_list();
-		while (1){
-			*comp_temp = *(*opd_number * *templist);
-			int differ = compare(comp_temp, number);
-			if (differ == 1){
-				resultmax = result;
-				result = (result + resultmin) / 2;
-				sresult = to_string(result);
-			}
-			else if (differ == -1){
-				resultmin = result;
-				result = (result + resultmax) / 2;
-				if (result == resultmin)
-					break;
-				sresult = to_string(result);
-				list_node* add_temp = *number + *opd_number;
-				if (compare(comp_temp, add_temp) == -1){
-					delete(add_temp->destructor());
-					break;
-				}
-				delete(add_temp->destructor());
-			}
-			else{
-				break;
-			}
-			*templist = sresult;
-		}//while
-		return templist;
-	}
-	else if (delta >0){
-		int opd_i = (int)opd_number->aftr->data - 48;
-		int num_i = ((int)number->aftr->data - 48) * 10 + ((int)number->aftr->aftr->data - 48);
-		int resultmax = num_i / opd_i;
-		int resultmin = num_i / (opd_i + 1);
-		int result = (resultmax + resultmin) / 2;
-		if (resultmin + 1 == resultmax){
-			result++;
-		}
-		string sresult = to_string(result);
-		string sz = "1";
-		list_node* templist = create_list(sresult);
-		for (int fi = 1; fi < delta; fi++)
-			sz = sz + "0";
-		list_node* tempzero = create_list(sz);
-		if (resultmin + 1 == resultmax){
-			list_node * comp_temp = (*opd_number * *templist);
-			list_node* comp_temp2 = *comp_temp * *tempzero;
-			int differ = compare(comp_temp2, number);
-			if (differ == 1){
-				sresult = to_string(result - 1);
-				*templist = sresult;
-			}
-			list_node* temprtn = (*templist * *tempzero);
-			delete(templist->destructor());
-			delete(tempzero->destructor());
-			delete(comp_temp->destructor());
-			delete(comp_temp2->destructor());
-			return temprtn;
-		}
-		list_node * comp_temp = create_list();
-		list_node * comp_temp2 = create_list();
-		while (1){
-			*comp_temp = *(*opd_number * *templist);
-			*comp_temp2 = *(*comp_temp * *tempzero);
-			int differ = compare(comp_temp2, number);
-			if (differ == 1){
-				resultmax = result;
-				result = (result + resultmin) / 2;
-				sresult = to_string(result);
-			}
-			else if (differ == -1){
-				resultmin = result;
-				result = (result + resultmax) / 2;
-				if (result == resultmin)
-					break;
-				sresult = to_string(result);
-				list_node* add_temp = *opd_number + *number;
-				if (compare(comp_temp2, add_temp) == -1){
-					delete (add_temp->destructor());
-					break;
-				}
-				delete (add_temp->destructor());
-			}
-			else{
-				break;
-			}
-			*templist = sresult;
-		}//while
-		list_node* temprtn = (*templist * *tempzero);
-		delete(comp_temp->destructor());
-		delete(comp_temp2->destructor());
-		delete(templist->destructor());
-		delete(tempzero->destructor());
-		return temprtn;
-	}
-	else{
-		return create_list("0");
-	}
-
-}
-*/
 pair<char, list_node *> list_node::estimatedv2(list_node *number, num_pack_t *numberpack)
 {
 	int i;
@@ -497,6 +365,7 @@ list_node *list_node::operator+(list_node &data)
 		carrybit->is_zero(); //消除多余的0；
 		list_node *rtn = *result + *carrybit;
 		delete (carrybit->destructor());
+		delete (result->destructor());
 		return rtn;
 	}
 	else
@@ -612,19 +481,6 @@ list_node *list_node::operator%(list_node &modulus)
 		return create_list("0");
 	else if (compare(&modulus, this) == 1)
 		return create_list(this);
-	/*
-	list_node* remainder = create_list(this);
-	list_node* temp_estimation = create_list();
-	while ((compare(remainder, &modulus) == 1) || (*remainder == modulus)){
-		list_node* estm =create_list( estimated(remainder, &modulus));
-		*temp_estimation = *(*estm * modulus);
-		delete(estm->destructor());
-		*remainder = *(*remainder - *temp_estimation).second;
-	}
-	delete(temp_estimation->destructor());
-	return remainder;
-	*/
-	//老版本的取模代码
 	pair<list_node *, list_node *> rtn_temp = d_m(&modulus);
 	delete (rtn_temp.first->destructor());
 	return rtn_temp.second;
@@ -669,7 +525,9 @@ cout << "finished.\n";
 			list_node *temp_res = create_list(dt->num[ptrpower->get_data()]);
 			for (int j = 1; j <= count; j++)
 				temp_res->push_back('0');
-			*respower = *(*respower + *temp_res);
+			list_node *temp_add = (*respower + *temp_res);
+			temp_add->replaceGuardian(respower);
+			delete (temp_add);
 			delete (temp_res->destructor());
 			count++;
 			pause = clock();
