@@ -1,7 +1,7 @@
 #include "list_node.h"
 double TIME_BREAK = 0.02;
 
-struct num_pack
+struct num_pack_s
 {
 	list_node *num[10];
 };
@@ -184,7 +184,7 @@ list_node* list_node::estimated(list_node* number, list_node* opd_number){
 
 }
 */
-pair<char, list_node *> list_node::estimatedv2(list_node *number, pack *numberpack)
+pair<char, list_node *> list_node::estimatedv2(list_node *number, num_pack_t *numberpack)
 {
 	int i;
 	number->is_zero();
@@ -241,7 +241,6 @@ bool list_node::is_zero()
 }
 list_node *list_node::destructor()
 {
-	//cout << printl(this);
 	list_node *delpoint = this->aftr;
 	if (delpoint == this)
 		return this;
@@ -252,18 +251,20 @@ list_node *list_node::destructor()
 		delpoint->prev = NULL;
 		list_node *point = delpoint;
 		delpoint = delnext;
-		delete point->aftr;
-		delete point->prev;
+		//delete point->aftr;
+		//delete point->prev;
 		delete point;
 		delnext = delnext->aftr;
 	}
+	delpoint->aftr = NULL;
+	delpoint->prev = NULL;
 	delete delpoint;
 	delnext->aftr = delnext;
 	delnext->data = '\0';
 	delnext->prev = delnext;
 	return delnext;
-
 } //
+
 list_node *create_list(const string str)
 {
 	list_node *newlist = create_list();
@@ -381,12 +382,13 @@ void list_node::push_back(const char item)
 { //insert an item at the back of the list
 	list_node *newitem = new list_node;
 	newitem->data = item;
-	list_node *enditem = prev;
+	list_node *enditem = this->prev;
 	newitem->aftr = this;
 	newitem->prev = enditem;
 	this->prev = newitem;
 	enditem->aftr = newitem;
 }
+
 void list_node::pop_back()
 { //delete the final item
 	list_node *delpoint = this->prev;
@@ -399,6 +401,7 @@ void list_node::pop_back()
 	delpoint->prev = NULL;
 	delete delpoint;
 }
+
 list_node *list_node::operator=(list_node data)
 {
 	if (this->prev == data.prev) //like apple=apple,invalid
@@ -567,8 +570,8 @@ list_node *list_node::operator*(list_node &data)
 	{
 		ptr1 = this;
 		ptr2 = &data;
-	}
-	pack *dt = new pack;
+	}		//ptr1 is smaller
+	num_pack_t *dt = new num_pack_t;
 	init_pack(dt, ptr1);
 	ptr2 = ptr2->prev;
 	list_node *rtn_res = create_list("0"); //return rtn_res
@@ -587,6 +590,7 @@ list_node *list_node::operator*(list_node &data)
 	rtn_res->is_zero();
 	return rtn_res;
 }
+
 list_node *list_node::operator/(list_node &data)
 {
 	if ((data.aftr->get_data() == 1) && (data.aftr->aftr->data == '\0')) //data=1
@@ -625,27 +629,29 @@ list_node *list_node::operator%(list_node &modulus)
 	delete (rtn_temp.first->destructor());
 	return rtn_temp.second;
 }
+
 list_node *list_node::operator^(int power)
 {
-	//cout << "I am calc : " << printl(this) << " ^ " << power<<endl;
+cout << "operator ^: dealing: " << printl(this) << " ^ " << power << endl;
 	clock_t start, pause;
 	double spend_time = 0.0;
-	//const double TIME_ALLOWED = 0.1;
 	start = clock();
-	//int del_length = -1;
 	if (power == 0)
 	{
 		return create_list("1");
 	}
-	pack *dt = new pack;
+	num_pack_t *dt = new num_pack_t;
 	init_pack(dt, this);
 	list_node *rtnpower = create_list(this);
 	for (int i = 1; i < power; i++)
 	{
 		//计算rtnpower * this，将res返回给rtnpower
+/*
 		if (spend_time >= TIME_BREAK)
-		{ //
-			//cout << "break time:  Time = " << TIME_BREAK << "   spend time = " << spend_time << "  power/i = " << (power / i) << "  power%i=" << (power % i) <<"  i = "<<i<< endl;
+		{
+			cout << " : " << spend_time << "s" << endl;
+			cout << "break time:  Time = " << TIME_BREAK << "   spend time = " << spend_time << "  power/i = " << (power / i) << "  power%i=" << (power % i) << "  i = " << i << endl
+				 << endl;
 			TIME_BREAK *= 10;
 			list_node *temp1 = (*rtnpower ^ (power / i));
 			list_node *temp2 = (*this ^ (power % i));
@@ -653,8 +659,8 @@ list_node *list_node::operator^(int power)
 			delete (temp1->destructor());
 			delete (temp2->destructor());
 			return rtn;
-		} //分解power
-
+		} //分解power:
+//*/
 		list_node *ptrpower = rtnpower->prev;
 		list_node *respower = create_list("0");
 		int count = 0;
@@ -663,31 +669,21 @@ list_node *list_node::operator^(int power)
 			list_node *temp_res = create_list(dt->num[ptrpower->get_data()]);
 			for (int j = 1; j <= count; j++)
 				temp_res->push_back('0');
-			list_node *temp_add = (*respower + *temp_res);
-			*respower = *temp_add;
-			delete (temp_add->destructor());
+			*respower = *(*respower + *temp_res);
 			delete (temp_res->destructor());
-			ptrpower = ptrpower->prev;
 			count++;
-
 			pause = clock();
 			spend_time = (double)(pause - start) / CLOCKS_PER_SEC;
+			ptrpower = ptrpower->prev;
 		}
 		*rtnpower = *respower;
 		delete (respower->destructor());
-
-	} //for
-	/*
-	for (int i = 1; i <= del_length + 10; i++)
-		printf("\b");
-	for (int i = 1; i <= del_length + 10; i++)
-		printf(" ");
-	for (int i = 1; i <= del_length + 10; i++)
-		printf("\b");
-	*/
-	//老版本的刷新代码
+cout << i << " ";
+	} 
+cout << " : " << spend_time << "s" << endl;
 	rm_pack(dt);
 	rtnpower->is_zero();
+	//cout << endl;
 	return rtnpower;
 }
 
@@ -733,156 +729,23 @@ int compare(list_node *data1, list_node *data2)
 	return -99;
 }
 
-void init_pack(pack *numpack, list_node *num)
+void init_pack(num_pack_t *numpack, list_node *num)
 {
 	numpack->num[0] = create_list("0");
 	numpack->num[1] = create_list(num);
 	for (int i = 2; i < 10; i++)
 	{
-		list_node *tempadd = *numpack->num[i - 1] + *numpack->num[1];
-		numpack->num[i] = create_list(tempadd);
-		delete (tempadd->destructor());
+		numpack->num[i] = *numpack->num[i - 1] + *numpack->num[1];
 	}
 }
-void rm_pack(pack *numpack)
+void rm_pack(num_pack_t *numpack)
 {
 	for (int i = 0; i < 10; i++)
 		delete (numpack->num[i]->destructor());
 	delete numpack;
 }
 
-/*
-list_node* list_node::operator^(int power){
-clock_t start, pause;
-double spend_time = 0.0;
-const double TIME_ALLOWED = 10.0;
-const double TIME_BREAK = 100.0;
-start = clock();
-int del_length = -1;
 
-if (power == 0){
-return create_list("1");
-}
-pack* dt = new pack;
-init_pack(dt, this);
-list_node* rtnpower = create_list(this);
-
-for (int i = 1; i < power; i++){
-//计算rtnpower * this，将res返回给rtnpower
-if (spend_time>=TIME_BREAK)
-;
-list_node* ptrpower = rtnpower->prev;
-list_node* respower = create_list("0");
-int count = 0;
-while (ptrpower->data != '\0'){
-list_node* temp_res = create_list(dt->num[ptrpower->get_data()]);
-for (int j = 1; j <= count; j++)
-temp_res->push_back('0');
-list_node* temp_add = (*respower + *temp_res);
-*respower = *temp_add;
-delete(temp_add->destructor());
-delete(temp_res->destructor());
-ptrpower = ptrpower->prev;
-count++;
-pause = clock();
-spend_time = (double)(pause - start) / CLOCKS_PER_SEC;
-if (spend_time>TIME_ALLOWED){
-char buffer[100];
-if (del_length == -1)
-cout << "  Time: ";
-double temp = ((double)i / (double)power) * 100;
-sprintf(buffer, "%5.2f%s%3.1f%s", spend_time,"s   Total: ",temp,"%");
-//cout << spend_time << endl;
-for (int i = 1; i <= del_length; i++)
-printf("\b");
-del_length = strlen(buffer);
-cout << buffer;
-}
-}
-*rtnpower = *respower;
-delete(respower->destructor());
-}
-for (int i = 1; i <= del_length + 10; i++)
-printf("\b");
-for (int i = 1; i <= del_length + 10; i++)
-printf(" ");
-for (int i = 1; i <= del_length + 10; i++)
-printf("\b");
-rm_pack(dt);
-rtnpower->is_zero();
-return rtnpower;
-}
-
-*/
-/*
-乘法：
-list_node* ptrl = this;
-list_node* ptrs = &data;
-if (ptrl->is_zero() || ptrs->is_zero())
-return create_list("0");
-pair<char, char> temppair;
-pair<bool, list_node*> numlib[10];
-if (compare(this, &data) == -1){
-ptrl = &data;
-ptrs = this;
-}
-numlib[0] = { true, create_list("0") };
-numlib[1] = { true, create_list(ptrs) };
-for (int i = 2; i < 10; i++)
-numlib[i] = { false, create_list() };
-ptrs = ptrs->prev;
-ptrl = ptrl->prev;
-while (ptrl->data != '\0'){
-if (numlib[ptrl->get_data()].first){
-ptrl = ptrl->prev;
-continue;
-}
-int n = ptrl->get_data();
-for (int i = n - 1; i >= 1; --i){
-if ((numlib[i].first) && (numlib[n - i].first)){
-numlib[n].first = true;
-list_node* addtemp = *numlib[i].second + *numlib[n - i].second;
-*numlib[n].second = *addtemp;
-delete(addtemp->destructor());
-ptrs = ptrs->aftr;
-break;
-}
-}//for
-if (!numlib[n].first){
-list_node* singleresult = create_list();
-list_node* carrybit = create_list("0");
-while (ptrs->data != '\0'){
-temppair = operator_bit(ptrs->data, ptrl->data, '*');
-singleresult->InsertItem(temppair.second, singleresult);
-carrybit->InsertItem(temppair.first, carrybit);
-ptrs = ptrs->prev;
-}
-numlib[n].first = true;
-*numlib[n].second = *(*singleresult + *carrybit);
-delete(singleresult->destructor());
-delete(carrybit->destructor());
-}//if (!Number[n].first)
-ptrl = ptrl->prev;
-ptrs = ptrs->prev;
-}
-list_node* finalresult = create_list("0");
-list_node* templist = create_list();
-ptrl = ptrl->prev;
-int count_final = 0;
-while (ptrl->data != '\0'){
-*templist = *(numlib[ptrl->get_data()].second);
-for (int i = 1; i <= count_final; i++)
-templist->push_back('0');
-++count_final;
-*finalresult = *(*finalresult + *templist);
-ptrl = ptrl->prev;
-}
-delete(templist->destructor());
-for (int i = 0; i < 10; i++)
-delete(numlib[i].second->destructor());
-finalresult->is_zero();
-return finalresult;
-*/
 pair<list_node *, list_node *> list_node::d_m(list_node *opt)
 {
 	list_node *ptr_end = this;
@@ -890,20 +753,18 @@ pair<list_node *, list_node *> list_node::d_m(list_node *opt)
 		ptr_end = ptr_end->aftr;
 	list_node *sublist = this->sublist(this->aftr, ptr_end); //delete sublist
 	list_node *rtn_list = create_list();
-	pack *dt = new pack;
+	num_pack_t *dt = new num_pack_t;
 	init_pack(dt, opt);
 	if (compare(sublist, opt) == -1)
 	{
 		ptr_end = ptr_end->aftr;
 		sublist->push_back(ptr_end->data);
 	}
-	//cout << "sublist = " << printl(sublist) << endl;
 	ptr_end = ptr_end->aftr;
 	while (ptr_end->data != '\0')
 	{
 		pair<char, list_node *> temp;
 		temp = estimatedv2(sublist, dt);
-		//cout << printl(temp.second) << endl;
 		rtn_list->push_back(temp.first);
 		*sublist = *temp.second;
 		sublist->push_back(ptr_end->data);
@@ -912,10 +773,27 @@ pair<list_node *, list_node *> list_node::d_m(list_node *opt)
 	}
 	pair<char, list_node *> temp;
 	temp = estimatedv2(sublist, dt);
-	rtn_list->push_back(temp.first); // ->/
-	*sublist = *temp.second;		 // ->%
-	delete (temp.second->destructor());
+	rtn_list->push_back(temp.first); 		// ->/
+	temp.second->replaceGuardian(sublist);  // ->%
 	rm_pack(dt);
-	//delete(sublist->destructor());
 	return {rtn_list, sublist};
+}
+
+void list_node::replaceGuardian(list_node *&newGuardian)
+{
+	if (this == newGuardian)
+		return;
+	newGuardian->destructor();
+	this->prev->aftr = newGuardian;
+	this->aftr->prev = newGuardian;
+	this->addGuardian(newGuardian);
+	this->aftr = this;
+	this->prev = this;
+}
+
+void list_node::addGuardian(list_node *&newGuardian)
+{
+	newGuardian->data = this->data;
+	newGuardian->aftr = this->aftr;
+	newGuardian->prev = this->prev;
 }

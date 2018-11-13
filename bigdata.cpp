@@ -9,6 +9,7 @@
 
 #define VERSION "2.0.0"
 #define LAST_DATA "$MMR"
+#define LAST_DATA_IN_MMR_MAP "MMR"
 #define MOD_DATA "$MOD"
 #define MAXPOWERS "4001"
 #define MAXPOWERI 4001
@@ -18,9 +19,9 @@
 using namespace std;
 
 typedef map<string, list_node *> M_MMR;
-M_MMR m_mmr;
+static M_MMR m_mmr;
 
-list_node *LAST_DATA_MMR;
+static list_node * LAST_DATA_MMR;
 
 typedef enum
 {
@@ -31,7 +32,7 @@ typedef enum
 	q,
 	mod,
 	mmr
-} ALL_INSTR;
+} eALL_INSTR;
 typedef enum
 {
 	finished,
@@ -39,29 +40,29 @@ typedef enum
 	unknown_instr,
 	error,
 	exits
-} RTN_INSTR;
+} eRTN_INSTR;
 typedef enum
 {
 	rm,
 	touch,
 	echo
-} MMR_INSTR;
+} eMMR_INSTR;		//never used yet
 
 typedef struct
 {
 	list_node *base;
 	int pow;
 	list_node *modulus;
-} modulus_s;
-modulus_s system_modulus;
+} modulus_t;
+modulus_t system_modulus;
 
 typedef struct
 {
 	vector<string> decompose_instr;
-	bool valid;
+	bool valid; 				//if vector.size == 0, valid = false. else valid = true
 } ANALYSIS_PACK_s;
 
-static ALL_INSTR status = q; //cal:cal ; fl:fl ; h:h ; mmr:mmr ; q:normal
+static eALL_INSTR status = q; //cal:cal ; fl:fl ; h:h ; mmr:mmr ; q:normal
 
 bool is_number(string &str)
 {
@@ -82,6 +83,7 @@ bool is_number(string &str)
 	else
 		return false;
 }
+
 list_node *analyze2list(string str)
 {
 	list_node *num;
@@ -92,7 +94,7 @@ list_node *analyze2list(string str)
 		s_temp = str.substr(1, str.length());
 		iter = m_mmr.find(s_temp);
 		if (iter != m_mmr.end())
-			num = create_list(iter->second);
+			num = create_list(iter->second);			//bug: why createlist. send the original list.
 		else
 			return NULL;
 	}
@@ -132,7 +134,7 @@ string analyze2str(int n)
 	ss >> str;
 	return str;
 }
-ALL_INSTR gets_status(string str)
+eALL_INSTR gets_status(string str)
 {
 	if (str == "cal")
 		return cal;
@@ -158,6 +160,7 @@ bool save_log(string &outputlog)
 		return false;
 	return true;
 }
+
 ANALYSIS_PACK_s analyze(string str)
 {
 	int ptr = 0;
@@ -182,7 +185,8 @@ ANALYSIS_PACK_s analyze(string str)
 		rtnpack.valid = true;
 	return rtnpack;
 }
-RTN_INSTR open_log(string filename)
+
+eRTN_INSTR open_log(string filename)
 {
 	ifstream file;
 	string str = "";
@@ -194,7 +198,7 @@ RTN_INSTR open_log(string filename)
 	}
 	return finished;
 }
-RTN_INSTR handle_cal(vector<string> hdle)
+eRTN_INSTR handle_cal(vector<string> hdle)
 {
 	if ((hdle.size() == 1) && (hdle.at(0) == "--help"))
 	{
@@ -212,43 +216,43 @@ RTN_INSTR handle_cal(vector<string> hdle)
 		return error;
 	}
 	string operators = hdle.at(1);
-	//cout << "        Calc: " << printl(num1) << " " << operators << " " << printl(num2) << endl;
 	string result_str = "";
 	if (operators == "+")
 	{
 		list_node *temp = addition(num1, num2, system_modulus.modulus);
-		*LAST_DATA_MMR = *temp;
+		temp->replaceGuardian(LAST_DATA_MMR);
 		result_str = printl(LAST_DATA_MMR);
-		delete (temp->destructor());
+		delete (temp);
 	}
 	else if (operators == "-")
 	{
 		pair<bool, list_node *> temp = subtracion(num1, num2, system_modulus.modulus);
-		*LAST_DATA_MMR = *temp.second;
-		result_str = printl(temp);
-		delete (temp.second->destructor());
+		//*LAST_DATA_MMR = *temp.second;
+		temp.second->replaceGuardian(LAST_DATA_MMR);
+		result_str = printl(LAST_DATA_MMR);
+		delete (temp.second);
 	}
 	else if (operators == "*")
 	{
 		list_node *temp = multiplication(num1, num2, system_modulus.modulus);
-		*LAST_DATA_MMR = *temp;
+		temp->replaceGuardian(LAST_DATA_MMR);
 		result_str = printl(LAST_DATA_MMR);
-		delete (temp->destructor());
+		delete (temp);
 	}
 	else if (operators == "/")
 	{
 		list_node *temp = division(num1, num2, system_modulus.modulus);
-		*LAST_DATA_MMR = *temp;
+		temp->replaceGuardian(LAST_DATA_MMR);
 		result_str = printl(LAST_DATA_MMR);
-		delete (temp->destructor());
+		delete (temp);
 	}
 	else if (operators == "^")
 	{
 		//int x = analyze2int(num2);
 		list_node *temp = power(num1, num2, system_modulus.modulus);
-		*LAST_DATA_MMR = *temp;
+		temp->replaceGuardian(LAST_DATA_MMR);
 		result_str = printl(LAST_DATA_MMR);
-		delete (temp->destructor());
+		delete (temp);
 	}
 	else
 	{
@@ -272,7 +276,7 @@ RTN_INSTR handle_cal(vector<string> hdle)
 	delete (num2->destructor());
 	return finished;
 }
-RTN_INSTR handle_mmr(vector<string> hdle)
+eRTN_INSTR handle_mmr(vector<string> hdle)
 {
 	if ((hdle.size() == 1) && (hdle.at(0) == "--help"))
 	{
@@ -362,7 +366,7 @@ RTN_INSTR handle_mmr(vector<string> hdle)
 	}
 	return finished;
 }
-RTN_INSTR handle_mod()
+eRTN_INSTR handle_mod()
 {
 	cout << "    the modulus is: ";
 	cout << printl(system_modulus.base);
@@ -389,7 +393,7 @@ RTN_INSTR handle_mod()
 	TIME_BREAK = 0.02;
 	return finished;
 }
-RTN_INSTR handle_fl(string filename)
+eRTN_INSTR handle_fl(string filename)
 {
 	ifstream file;
 	file.open(filename, ios_base::in);
@@ -408,7 +412,7 @@ RTN_INSTR handle_fl(string filename)
 			if (str == FL_OPT_MODULO_CASE_OFF)
 				modulo_switch = 0;
 			ANALYSIS_PACK_s temp_pack;
-			RTN_INSTR fl_status;
+			eRTN_INSTR fl_status;
 			temp_pack = analyze(str);
 			if (!temp_pack.valid)
 			{
@@ -457,15 +461,18 @@ int welcome()
 		return -1;
 	logfile << "This is a logfile.\n";
 	logfile.close();
+
 	modulo_switch = true;
 	system_modulus.base = create_list("2");
 	system_modulus.pow = 50;
 	system_modulus.modulus = (*system_modulus.base ^ system_modulus.pow);
 	LAST_DATA_MMR = create_list("0");
 	TIME_BREAK = 0.02;
+	m_mmr[LAST_DATA_IN_MMR_MAP] = LAST_DATA_MMR;
 	return 0;
 }
-RTN_INSTR execute(ANALYSIS_PACK_s &pack)
+
+eRTN_INSTR execute(ANALYSIS_PACK_s &pack)
 {
 	string temp_instr = pack.decompose_instr.at(0);
 	if (temp_instr == "q")
@@ -615,14 +622,28 @@ RTN_INSTR execute(ANALYSIS_PACK_s &pack)
 }
 int main()
 {
-	bool already_print = false;
+	//bool already_print = false;
+/*
+	system("pause");
+	while(1){
+	list_node *test_list = create_list("12");
+	list_node *test_list2 = create_list("234234234");
+	//list_node *getres = (*test_list ^ 400);
+	delete (test_list->destructor());
+	delete (test_list2->destructor());
+	//delete (getres->destructor());
+	}
+	system("pause");	
+*/
+
+
 	if (welcome() != 0)
 	{
 		return -1;
 	}
 	while (1)
 	{
-		if (!already_print)
+		if (true/*!already_print*/)
 		{
 			switch (status)
 			{
@@ -645,7 +666,7 @@ int main()
 				break;
 			}
 		}
-		already_print = true;
+		//already_print = true;
 
 		string instruction;
 		ANALYSIS_PACK_s temp;
@@ -655,13 +676,13 @@ int main()
 		if (instruction == "modulo_switch off")
 		{
 			modulo_switch = false;
-			already_print = false;
+			//already_print = false;
 			continue;
 		}
 		else if (instruction == "modulo_switch on")
 		{
 			modulo_switch = true;
-			already_print = false;
+			//already_print = false;
 			continue;
 		}
 		temp = analyze(instruction);
@@ -682,6 +703,6 @@ int main()
 		case exits:
 			return 0;
 		}
-		already_print = false;
+		//already_print = false;
 	}
 }

@@ -2,7 +2,7 @@
 
 BIN	= a.exe
 CC	= gcc
-CFLAG	= -g3 -Wall -static-libgcc =std=c++11
+CFLAG	= -g3 -Wall -static-libgcc =std=c++11 
 CXX	= g++
 CXXFLAG	= -g3 -Wall -static-libgcc -std=c++11 -lstdc++
 OBJ	= big_int.o bigdata.o list_node.o 
