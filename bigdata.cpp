@@ -622,18 +622,6 @@ eRTN_INSTR execute(ANALYSIS_PACK_s &pack)
 int main()
 {
 	//bool already_print = false;
-	system("pause");
-	//while(1){
-
-		list_node *a = create_list("99");
-		list_node *result = *a ^ 2;
-		cout << printl(result)<<endl;
-		delete (a->destructor());
-		delete (result->destructor());
-	//}
-	system("pause");
-	return 0;
-
 	if (welcome() != 0)
 	{
 		return -1;

@@ -447,11 +447,14 @@ list_node *list_node::operator*(list_node &data)
 	int count = 0;
 	while (ptr2->data != '\0')
 	{
-		list_node *temp_res = create_list(dt->num[ptr2->get_data()]);
+		list_node *temp_res = create_list(dt->num[ptr2->get_data()]);  		//memory_loss
 		for (int j = 1; j <= count; j++)
-			temp_res->push_back('0');
-		*rtn_res = *(*rtn_res + *temp_res);
-		delete (temp_res->destructor());
+			temp_res->push_back('0'); 		//memory_loss
+		list_node* temp_add_res = (*rtn_res + *temp_res);
+		delete(temp_res->destructor());
+		temp_add_res->replaceGuardian(rtn_res);
+		//*rtn_res = *(*rtn_res + *temp_res);
+		delete (temp_add_res);
 		ptr2 = ptr2->prev;
 		count++;
 	}
@@ -515,6 +518,9 @@ cout << "multipling:";
 cout << "finished.\n";
 			delete (temp1->destructor());
 			delete (temp2->destructor());
+			delete (rtnpower->destructor());
+			rm_pack(dt);
+			rtn->is_zero();
 			return rtn;
 		} //·Ö½âpower:
 		list_node *ptrpower = rtnpower->prev;
