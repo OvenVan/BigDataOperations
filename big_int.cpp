@@ -6,11 +6,13 @@ list_node *addition(list_node *data1, list_node *data2, list_node *modulus)
 	start = clock();
 	list_node *rtn = *data1 + *data2;
 	end = clock();
-	cout << "  Add Time : " << (double)(end - start) / CLOCKS_PER_SEC << "s\n";
+	cout << "  Add Time : " << (double)(end - start) / CLOCKS_PER_SEC << "s, ";
 	if (modulo_switch)
 	{
 		start = clock();
-		*rtn = *(*rtn % *modulus);
+		list_node* rtn_modulus = (*rtn % *modulus);
+		rtn_modulus->replaceGuardian(rtn);
+		delete (rtn_modulus);
 		end = clock();
 		cout << "  Module Time : " << (double)(end - start) / CLOCKS_PER_SEC << "s\n  result: ";
 	}
@@ -22,14 +24,14 @@ pair<bool, list_node *> subtracion(list_node *data1, list_node *data2, list_node
 	clock_t start, end;
 	start = clock();
 	pair<bool, list_node *> temp = (*data1 - *data2);
-	//bool oprt = (*data1 - *data2).first;
-	//list_node* rtn = (*data1 - *data2).second;
 	end = clock();
-	cout << "  Subtract Time : " << (double)(end - start) / CLOCKS_PER_SEC << "s\n";
+	cout << "  Subtract Time : " << (double)(end - start) / CLOCKS_PER_SEC << "s, ";
 	if (modulo_switch)
 	{
 		start = clock();
-		*temp.second = *(*temp.second % *modulus);
+		//*temp.second = *(*temp.second % *modulus);
+		list_node* rtn_modulus = (*temp.second % *modulus);
+		rtn_modulus->replaceGuardian(temp.second);
 		end = clock();
 		cout << "  Module Time : " << (double)(end - start) / CLOCKS_PER_SEC << "s\n  result: ";
 	}
@@ -43,11 +45,14 @@ list_node *multiplication(list_node *data1, list_node *data2, list_node *modulus
 	start = clock();
 	list_node *rtn = *data1 * *data2;
 	end = clock();
-	cout << "  Mulitplicate Time : " << (double)(end - start) / CLOCKS_PER_SEC << "s\n";
+	cout << "  Mulitplicate Time : " << (double)(end - start) / CLOCKS_PER_SEC << "s, ";
 	if (modulo_switch)
 	{
 		start = clock();
-		*rtn = *(*rtn % *modulus);
+		//*rtn = *(*rtn % *modulus);
+		list_node* rtn_modulus = (*rtn % *modulus);
+		rtn_modulus->replaceGuardian(rtn);
+		delete (rtn_modulus);
 		end = clock();
 		cout << "  Module Time : " << (double)(end - start) / CLOCKS_PER_SEC << "s\n  result: ";
 	}
@@ -61,11 +66,14 @@ list_node *division(list_node *data1, list_node *data2, list_node *modulus)
 	start = clock();
 	list_node *rtn = (*data1 / *data2);
 	end = clock();
-	cout << "  Division Time : " << (double)(end - start) / CLOCKS_PER_SEC << "s\n";
+	cout << "  Division Time : " << (double)(end - start) / CLOCKS_PER_SEC << "s, ";
 	if (modulo_switch)
 	{
 		start = clock();
-		rtn = *rtn % *modulus;
+		//rtn = *rtn % *modulus;
+		list_node* rtn_modulus = (*rtn % *modulus);
+		rtn_modulus->replaceGuardian(rtn);
+		delete (rtn_modulus);
 		end = clock();
 		cout << "  Module Time : " << (double)(end - start) / CLOCKS_PER_SEC << "s\n  result:";
 	}
@@ -120,23 +128,3 @@ list_node *power(list_node *data, list_node *power, list_node *modulus)
 	cout << "  Module Time : " << (double)(end - start) / CLOCKS_PER_SEC << "s\n  result:";
 	return rtn;
 }
-
-/*
-clock_t start, end;
-start = clock();
-//printl(data);
-list_node * rtn = (*data ^ power);
-end = clock();
-cout << "  Power Time : " << (double)(end - start) / CLOCKS_PER_SEC << "s\n";
-if (modulo_switch){
-start = clock();
-//rtn = (*data ^ power);
-//printl(rtn);
-*rtn = *(*rtn % * modulus);
-end = clock();
-cout << "  Module Time : " << (double)(end - start) / CLOCKS_PER_SEC << "s\n  result:";
-//TIME_BREAK = 1.0;
-}
-TIME_BREAK = 0.02;
-
-*/

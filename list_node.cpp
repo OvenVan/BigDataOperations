@@ -274,10 +274,8 @@ list_node *list_node::operator=(list_node data)
 {
 	if (this->prev == data.prev) //like apple=apple,invalid
 		return this;
-	list_node *ptr = this->aftr;
-	while (ptr->data != '\0')
-		ptr = this->DeleteItem(ptr);
-	ptr = data.aftr;
+	this->destructor();
+	list_node *ptr = data.aftr;
 	while (ptr->data != '\0')
 	{
 		this->push_back(ptr->data);
@@ -285,6 +283,7 @@ list_node *list_node::operator=(list_node data)
 	}
 	return this;
 }
+
 list_node *list_node::operator=(string str)
 {
 	list_node *ptr = this->aftr;
@@ -453,7 +452,6 @@ list_node *list_node::operator*(list_node &data)
 		list_node* temp_add_res = (*rtn_res + *temp_res);
 		delete(temp_res->destructor());
 		temp_add_res->replaceGuardian(rtn_res);
-		//*rtn_res = *(*rtn_res + *temp_res);
 		delete (temp_add_res);
 		ptr2 = ptr2->prev;
 		count++;
@@ -491,7 +489,6 @@ list_node *list_node::operator%(list_node &modulus)
 
 list_node *list_node::operator^(int power)
 {
-cout << "operator ^: dealing: " << printl(this) << " ^ " << power << endl;
 	clock_t start, pause;
 	double spend_time = 0.0;
 	start = clock();
@@ -507,15 +504,10 @@ cout << "operator ^: dealing: " << printl(this) << " ^ " << power << endl;
 		//计算rtnpower * this，将res返回给rtnpower
 		if (spend_time >= TIME_BREAK)
 		{
-			cout << " : " << spend_time << "s" << endl;
-			cout << "break time:  Time = " << TIME_BREAK << "   spend time = " << spend_time << "  power/i = " << (power / i) << "  power%i=" << (power % i) << "  i = " << i << endl
-				 << endl;
 			TIME_BREAK *= 10;
 			list_node *temp1 = (*rtnpower ^ (power / i));
 			list_node *temp2 = (*this ^ (power % i));
-cout << "multipling:";
 			list_node *rtn = *temp1 * *temp2;
-cout << "finished.\n";
 			delete (temp1->destructor());
 			delete (temp2->destructor());
 			delete (rtnpower->destructor());
@@ -542,12 +534,9 @@ cout << "finished.\n";
 		}
 		*rtnpower = *respower;
 		delete (respower->destructor());
-cout << ".";
 	} 
-cout << " : " << spend_time << "s" << endl;
 	rm_pack(dt);
 	rtnpower->is_zero();
-	//cout << endl;
 	return rtnpower;
 }
 
